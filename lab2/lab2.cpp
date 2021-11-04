@@ -13,7 +13,7 @@ public:
 
 	string value;
 
-	LongInt(string x)
+	LongInt(string x) // коп≥юЇ ресурс х, що скоро зникне, шкода розлучатись :(
 	{
 		value = move(x);
 	}
@@ -24,7 +24,7 @@ public:
 	}
 
 
-	static int equalizer(string num1, string num2)
+	static int equalizer(string num1, string num2) // зр≥внюЇ по к≥лькост≥ символ≥в
 	{
 		int s = max(num1.size(), num2.size());
 
@@ -37,28 +37,69 @@ public:
 	}
 
 
-	static string add(string num1, string num2)
+	static string add(string num1, string num2) // дл€ оператора додаванн€
 	{
 		long n = equalizer(num1, num2);
 		string result;
 		int sum;
-		int h = 0;
+		int remain = 0;
 
 		for (int j = n - 1; j >= 0; j--)
 		{
-			sum = (num1[j] - '0') + (num2[j] - '0') + h;
+			sum = (num1[j] - '0') + (num2[j] - '0') + remain;
 			result.insert(0, to_string(sum % base));
-			h = sum / base;
+			remain = sum / base;
 		}
 
-		result.insert(0, to_string(h));
+		if (remain)
+		{
+			result.insert(0, to_string(remain));
+		}
 
 		return result.erase(0, min(result.find_first_not_of('0'), result.size() - 1));
 	}
 
 
-	static string sub(string num1, string num2)
+	static string sub(string num1, string num2) // дл€ оператора в≥дн≥манн€
 	{
+		long n = equalizer(num1, num2);
+		string result, x, y;
+		int differ;
+
+		if (num1 > num2) // перев≥р€Їмо, чи не буде р≥зниц€ в≥д'Їмна
+		{
+			x = num1;
+			y = num2;
+		}
+		else
+		{
+			x = num2;
+			y = num1;
+		}
+
+		for (int j = n - 1; j >= 0; --j)
+		{
+			if (differ >= 0)
+				result.insert(0, to_string(differ));
+			else
+			{
+				int next = j - 1;
+				while (next >= 0)
+				{
+					x[next] = (base + (x[next] - '0') - 1) % base + '0';
+
+					if (x[next] != 9)
+						break;
+					else
+						--next;
+				}
+
+				result.insert(0, to_string(differ + base));
+
+			}
+		}
+
+		return result.erase(0, min(result.find_first_not_of('0'), result.size() - 1));
 
 	}
 
@@ -74,13 +115,7 @@ public:
 	}
 
 
-	LongInt operator * (LongInt x)
-	{
-
-	}
-
-
-	static string multiply_x10(string num, long steps)
+	static string multiply_x10(string num, long steps) // вир≥внюЇ по нул€м
 	{
 		for (int i = 0; i < steps; i++)
 			num.append("0");
@@ -89,9 +124,15 @@ public:
 	}
 
 
+	// NOTES: Karatsuba
+	// x = aT + b
+	// y = cT + d 
+	// x*y = acT^2 + (ad + bc)T + bd
+	// x*y = acT^2 + ((a+b)(c+d) - ac - bd)T + bd
+
 	static string Karatsuba(LongInt num1, LongInt num2)
 	{
-		LongInt result, a1, a2, b1, b2, c1, c2, T1;
+		LongInt result, a1, a2, b1, b2, c1, c2, d1, d2, d1d2, T;
 		long s = LongInt::equalizer(num1.value, num2.value);
 		if (s == 1)
 		{
@@ -102,27 +143,25 @@ public:
 		a2 = num1.value.substr(s/2, s - s/2);
 		b1 = num2.value.substr(0, s/2);
 		b2 = num2.value.substr(s/2, s - s/2);
-		c1 = a1 * b1;
-		c2 = a2 * b2;
-
-		T1 = (a1 + a2) * (b1 + b2) - c1  - c2;
+		c1 = Karatsuba(a1, b1);
+		c2 = Karatsuba(a2, b2);
+		d1 = a1 + a2;
+		d2 = b1 + b2;
+		d1d2 = Karatsuba(d1, d2);
+		T = d1d2 - c1 - c2;
 
 		LongInt::multiply_x10(c1.value, 2 * (s - s / 2));
-		LongInt::multiply_x10(T1.value, 2 * (s / 2));
+		LongInt::multiply_x10(T.value, 2 * (s / 2));
+
+		result = c1 + c2 + T;
 
 		return result.value.erase(0, min(result.value.find_first_not_of('0'), result.value.size() - 1));
-
 
 	}
 
 
 };
 
-// karatsuba:
-// x = aT + b
-// y = cT + d 
-// x*y = acT^2 + (ad + bc)T + bd
-// x*y = acT^2 + ((a+b)(c+d) - ac - bd)T + bd
 
 
 int main()
