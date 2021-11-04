@@ -23,6 +23,7 @@ public:
 		value = "0";
 	}
 
+
 	static int equalizer(string num1, string num2)
 	{
 		int s = max(num1.size(), num2.size());
@@ -58,9 +59,34 @@ public:
 		return LongInt(sub((*this).value, x.value));
 	}
 
-	LongInt operator * (LongInt x)
+	float M[5];
+	int size;
+	LongInt()
 	{
-		return 
+		size = 0;
+	}
+
+	LongInt(int nsize, float nM[])
+	{
+		size = nsize;
+		for (int j = 0; j < nsize; j++)
+			M[j] = nM[j]; 
+	}
+
+	LongInt operator * (LongInt J)
+	{
+		LongInt tmp;
+		int n;
+
+		if (size < J.size)
+			n = J.size;
+		else
+			n = size;
+		for (int j = 0; j < n; j++)
+			tmp.M[j] = M[j] * J.M[j];
+		tmp.size = n;
+
+		return tmp;
 	}
 
 
@@ -75,27 +101,22 @@ public:
 
 	static string Karatsuba(LongInt num1, LongInt num2)
 	{
-		LongInt result, a1, a2, b1, b2, c1, c2, T1;
-		long n = LongInt::equalizer(num1.value, num2.value);
-		if (n == 1)
+		LongInt result, a1, a2, b1, b2, c1, c2, d1, d2, dd, T1;
+		long s = LongInt::equalizer(num1.value, num2.value);
+		if (s == 1)
 		{
-			
+			return to_string((num1.value[0] - '0') * (num2.value[0] - '0'));
 		}
 
-		a1 = num1.value.substr(0, n/2);
-		a2 = num1.value.substr(n/2, n - n/2);
-		b1 = num2.value.substr(0, n/2);
-		b2 = num2.value.substr(n/2, n - n/2);
+		a1 = num1.value.substr(0, s/2);
+		a2 = num1.value.substr(s/2, s - s/2);
+		b1 = num2.value.substr(0, s/2);
+		b2 = num2.value.substr(s/2, s - s/2);
+		c1 = (a1 + a2);
+		c2 = (b1 + b2);
 
-		c1 = a1*b1;
-		c2 = a2*b2;
 
-		T1 = (a1 + a2) * (b1 + b2) - c1 - c2;
 
-		result = c1 + c2 + T1
-		
-			
-		return ();
 
 	}
 
