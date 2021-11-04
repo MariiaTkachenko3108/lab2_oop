@@ -36,11 +36,28 @@ public:
 	}
 
 
+	static string add(string num1, string num2)
+	{
+
+	}
+
+
+	static string sub(string num1, string num2)
+	{
+
+	}
+
+
 	LongInt operator + (LongInt x)
 	{
-		LongInt x;
-		
+		return LongInt(add((*this).value, x.value));
 	}
+
+	LongInt operator - (LongInt x)
+	{
+		return LongInt(sub((*this).value, x.value));
+	}
+
 
 
 };
