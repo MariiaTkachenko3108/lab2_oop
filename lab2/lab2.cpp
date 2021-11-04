@@ -39,7 +39,21 @@ public:
 
 	static string add(string num1, string num2)
 	{
+		long n = equalizer(num1, num2);
+		string result;
+		int sum;
+		int h = 0;
 
+		for (int j = n - 1; j >= 0; j--)
+		{
+			sum = (num1[j] - '0') + (num2[j] - '0') + h;
+			result.insert(0, to_string(sum % base));
+			h = sum / base;
+		}
+
+		result.insert(0, to_string(h));
+
+		return result.erase(0, min(result.find_first_not_of('0'), result.size() - 1));
 	}
 
 
@@ -59,34 +73,10 @@ public:
 		return LongInt(sub((*this).value, x.value));
 	}
 
-	float M[5];
-	int size;
-	LongInt()
+
+	LongInt operator * (LongInt x)
 	{
-		size = 0;
-	}
 
-	LongInt(int nsize, float nM[])
-	{
-		size = nsize;
-		for (int j = 0; j < nsize; j++)
-			M[j] = nM[j]; 
-	}
-
-	LongInt operator * (LongInt J)
-	{
-		LongInt tmp;
-		int n;
-
-		if (size < J.size)
-			n = J.size;
-		else
-			n = size;
-		for (int j = 0; j < n; j++)
-			tmp.M[j] = M[j] * J.M[j];
-		tmp.size = n;
-
-		return tmp;
 	}
 
 
@@ -101,7 +91,7 @@ public:
 
 	static string Karatsuba(LongInt num1, LongInt num2)
 	{
-		LongInt result, a1, a2, b1, b2, c1, c2, d1, d2, dd, T1;
+		LongInt result, a1, a2, b1, b2, c1, c2, T1;
 		long s = LongInt::equalizer(num1.value, num2.value);
 		if (s == 1)
 		{
@@ -112,10 +102,15 @@ public:
 		a2 = num1.value.substr(s/2, s - s/2);
 		b1 = num2.value.substr(0, s/2);
 		b2 = num2.value.substr(s/2, s - s/2);
-		c1 = (a1 + a2);
-		c2 = (b1 + b2);
+		c1 = a1 * b1;
+		c2 = a2 * b2;
 
+		T1 = (a1 + a2) * (b1 + b2) - c1  - c2;
 
+		LongInt::multiply_x10(c1.value, 2 * (s - s / 2));
+		LongInt::multiply_x10(T1.value, 2 * (s / 2));
+
+		return result.value.erase(0, min(result.value.find_first_not_of('0'), result.value.size() - 1));
 
 
 	}
