@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-
+#include <utility>
 
 using namespace std;
 
@@ -11,7 +11,17 @@ class LongInt
 {
 public:
 
+	string value;
 
+	LongInt(string x)
+	{
+		value = move(x);
+	}
+
+	LongInt()
+	{
+		value = "0";
+	}
 
 	static int equalizer(string num1, string num2)
 	{
@@ -23,6 +33,13 @@ public:
 			num2.insert(0, "0");
 
 		return 0;
+	}
+
+
+	LongInt operator + (LongInt x)
+	{
+		LongInt x;
+		
 	}
 
 
